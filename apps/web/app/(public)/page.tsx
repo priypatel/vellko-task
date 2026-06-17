@@ -77,6 +77,33 @@ export default function LandingPage() {
             <Link href="/login">Login</Link>
           </Button>
         </div>
+
+        {/* Demo credentials */}
+        <div className="mt-10 w-full max-w-md rounded-lg border border-dashed bg-secondary/40 p-4 text-left">
+          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Try it with a demo account
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-md border bg-background p-3">
+              <p className="text-xs font-medium">User</p>
+              <p className="mt-1 font-mono text-xs text-muted-foreground">
+                demo@test.com
+              </p>
+              <p className="font-mono text-xs text-muted-foreground">
+                Demo@12345
+              </p>
+            </div>
+            <div className="rounded-md border bg-background p-3">
+              <p className="text-xs font-medium">Admin</p>
+              <p className="mt-1 font-mono text-xs text-muted-foreground">
+                admin@test.com
+              </p>
+              <p className="font-mono text-xs text-muted-foreground">
+                Admin@12345
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Features */}
