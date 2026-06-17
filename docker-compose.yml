@@ -7,8 +7,9 @@ services:
       POSTGRES_DB: docsign
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    # Host port 5433 to avoid clashing with a native Postgres on 5432.
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - docsign_pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -21,8 +22,9 @@ services:
     image: redis:7-alpine
     container_name: docsign-redis
     restart: unless-stopped
+    # Host port 6380 to avoid clashing with another Redis on 6379.
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - docsign_redisdata:/data
     healthcheck:
