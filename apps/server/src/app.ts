@@ -24,7 +24,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'OK' });
+  res.json({
+    success: true,
+    message: 'OK',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Module routers
