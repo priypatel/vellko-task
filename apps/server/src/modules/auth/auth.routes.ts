@@ -27,6 +27,8 @@ router.post(
   asyncHandler(authController.login),
 );
 
+router.get('/me', authenticate, asyncHandler(authController.me));
+
 router.post('/logout', authenticate, asyncHandler(authController.logout));
 
 router.post('/refresh', asyncHandler(authController.refresh));

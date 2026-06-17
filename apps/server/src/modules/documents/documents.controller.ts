@@ -47,12 +47,12 @@ export async function listDocuments(
 }
 
 export async function getDocument(req: Request, res: Response): Promise<void> {
-  const document = await documentsService.getDocument(
+  const { document, signatures } = await documentsService.getDocument(
     req.params.id,
     req.user!.id,
     req.ip,
   );
-  res.status(200).json({ success: true, data: { document } });
+  res.status(200).json({ success: true, data: { document, signatures } });
 }
 
 export async function deleteDocument(
@@ -72,7 +72,19 @@ export async function getDownloadUrl(
     req.user!.id,
     req.ip,
   );
-  res.redirect(302, url);
+  // Return the presigned URL as JSON rather than a 302. The SPA holds its
+  // access token in memory (not a cookie), so a direct browser navigation to
+  // this protected endpoint would not be authenticated. The client opens the
+  // returned URL itself.
+  res.status(200).json({ success: true, data: { url } });
+}
+
+export async function getPreviewUrl(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const url = await documentsService.getPreviewUrl(req.params.id, req.user!.id);
+  res.status(200).json({ success: true, data: { url } });
 }
 
 export async function signDocument(req: Request, res: Response): Promise<void> {

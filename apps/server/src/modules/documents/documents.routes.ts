@@ -47,6 +47,12 @@ router.get(
   asyncHandler(documentsController.getDownloadUrl),
 );
 
+router.get(
+  '/:id/preview',
+  authenticate,
+  asyncHandler(documentsController.getPreviewUrl),
+);
+
 router.post(
   '/:id/sign',
   authenticate,

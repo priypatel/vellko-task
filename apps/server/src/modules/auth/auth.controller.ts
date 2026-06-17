@@ -18,6 +18,11 @@ function refreshCookieOptions(): CookieOptions {
   };
 }
 
+export async function me(req: Request, res: Response): Promise<void> {
+  const user = await authService.getMe(req.user!.id);
+  res.status(200).json({ success: true, data: { user } });
+}
+
 export async function register(req: Request, res: Response): Promise<void> {
   const { name, email, password } = req.body;
   const user = await authService.register(name, email, password, req.ip);

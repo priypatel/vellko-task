@@ -43,6 +43,23 @@ function toPublicUser(row: UserRow): PublicUser {
 }
 
 /**
+ * Fetch the current user's public profile (used to restore a session after a
+ * page reload, where only the access token's userId/role are available).
+ */
+export async function getMe(userId: string): Promise<PublicUser> {
+  const result = await query<UserRow>(
+    `SELECT id, name, email, password_hash, role, created_at, updated_at
+     FROM users WHERE id = $1`,
+    [userId],
+  );
+  const user = result.rows[0];
+  if (!user) {
+    throw httpError(404, 'User not found');
+  }
+  return toPublicUser(user);
+}
+
+/**
  * Register a new account.
  */
 export async function register(

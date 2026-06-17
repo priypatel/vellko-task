@@ -147,18 +147,45 @@ async function findOwnedDocument(
   return document;
 }
 
+export interface SignaturePlacement {
+  id: string;
+  page: number;
+  signedAt: Date;
+}
+
 export async function getDocument(
   documentId: string,
   userId: string,
   ip?: string,
-): Promise<Document> {
+): Promise<{ document: Document; signatures: SignaturePlacement[] }> {
   const document = await findOwnedDocument(documentId, userId);
+
+  const placements = await query<{
+    id: string;
+    page: number;
+    signed_at: Date;
+  }>(
+    `SELECT id, page, signed_at
+     FROM document_signatures
+     WHERE document_id = $1
+     ORDER BY signed_at ASC`,
+    [documentId],
+  );
+
   await writeAuditLog(AuditAction.DOCUMENT_VIEWED, {
     userId,
     documentId,
     ip,
   });
-  return mapDocument(document);
+
+  return {
+    document: mapDocument(document),
+    signatures: placements.rows.map((r) => ({
+      id: r.id,
+      page: r.page,
+      signedAt: r.signed_at,
+    })),
+  };
 }
 
 export async function deleteDocument(
@@ -212,6 +239,22 @@ export async function getDownloadUrl(
   });
 
   return url;
+}
+
+/**
+ * Presigned URL for in-browser preview. Returns the signed file if the
+ * document is signed, otherwise the original. Owner-only.
+ */
+export async function getPreviewUrl(
+  documentId: string,
+  userId: string,
+): Promise<string> {
+  const document = await findOwnedDocument(documentId, userId);
+  const key =
+    document.status === 'signed' && document.signed_file_key
+      ? document.signed_file_key
+      : document.original_file_key;
+  return getSignedUrl(BUCKET, key, DOWNLOAD_URL_TTL);
 }
 
 export async function signDocument(
